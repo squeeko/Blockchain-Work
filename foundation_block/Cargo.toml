@@ -1,0 +1,25 @@
+[package]
+name = "foundation_block"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+uuid = { version = "1.8.0", features = ["v4"] }
+bincode = "1.3.3"
+bs58 = "0.5.1"
+clap = "4.5.4"
+data-encoding = "2.6.0"
+env_logger = "0.11.3"
+log = "0.4.21"
+num-bigint = "0.4.5"
+once_cell = "1.19.0"
+ring = "0.17.8"
+rust-crypto = "0.2.36"
+rustc-serialize = "0.3.25"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "1.0.117"
+sled = "0.34.7"
+structopt = "0.3.26"
+
+[dev-dependencies]
+assert_cmd = "2.0.14"
