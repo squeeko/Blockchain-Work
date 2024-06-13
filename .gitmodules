@@ -1,3 +1,6 @@
 [submodule "foundry-project/lib/forge-std"]
 	path = foundry-project/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "foundry-project/lib/solmate"]
+	path = foundry-project/lib/solmate
+	url = https://github.com/transmissions11/solmate
