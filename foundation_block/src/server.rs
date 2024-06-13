@@ -28,6 +28,8 @@ static GLOBAL_MEMORY_POOL: Lazy<MemoryPool> = Lazy::new(|| MemoryPool::new());
 static GLOBAL_BLOCKS_IN_TRANSIT: Lazy<BlockInTransit> = Lazy::new(|| BlockInTransit::new());
 
 const TCP_WRITE_TIMEOUT: u64 = 1000;
+
+#[allow(dead_code)]
 pub struct Server {
     blockchain: Blockchain,
 }

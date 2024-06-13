@@ -1,3 +1,4 @@
+#![allow(warnings)]
 mod block;
 use block::Block;
 
