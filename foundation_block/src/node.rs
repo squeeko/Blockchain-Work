@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+use std::sync::RwLock;
 #[derive(Clone)]
 pub struct Node {
     addr: String,
@@ -11,7 +13,7 @@ impl Node {
         self.addr.clone()
     }
 
-    pub fn parse_socket_addr(&self) -> Socket {
+    pub fn parse_socket_addr(&self) -> SocketAddr {
         self.addr.parse().unwrap()
     }
 }
@@ -27,14 +29,14 @@ impl Nodes {
         }
     }
 
-    pub fn add_node(&self, addr: String) -> Node {
+    pub fn add_node(&self, addr: String) {
         let mut inner = self.inner.write().unwrap();
         if let None = inner.iter().position(|x| x.get_addr().eq(addr.as_str())) {
             inner.push(Node::new(addr));
         }
     }
 
-    pub fn evict_node(&self, addr: &str) -> Node {
+    pub fn evict_node(&self, addr: &str) {
         let mut inner = self.inner.write().unwrap();
         if let Some(idx) = inner.iter().position(|x| x.get_addr().eq(addr)) {
             inner.remove(idx);

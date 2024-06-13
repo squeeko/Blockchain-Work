@@ -29,7 +29,7 @@ impl Config {
     }
     pub fn get_node_addr(&self) -> String {
         let inner = self.inner.read().unwrap();
-        inner.get(NODE_ADDRESS_KEY).unwrap().clone();
+        inner.get(NODE_ADDRESS_KEY).unwrap().clone()
     }
 
     pub fn set_mining_addr(&self, addr: String) {
@@ -47,6 +47,6 @@ impl Config {
 
     pub fn is_miner(&self) -> bool {
         let inner = self.inner.read().unwrap();
-        inner.contains_key(MINING_ADDRESS_KEY);
+        inner.contains_key(MINING_ADDRESS_KEY)
     }
 }

@@ -1,3 +1,8 @@
+use crate::Transaction;
+use data_encoding::HEXLOWER;
+use std::collections::HashMap;
+use std::sync::RwLock;
+
 pub struct MemoryPool {
     inner: RwLock<HashMap<String, Transaction>>,
 }
@@ -5,7 +10,7 @@ pub struct MemoryPool {
 impl MemoryPool {
     pub fn new() -> MemoryPool {
         MemoryPool {
-            inner: RwLock::new(Hashmap::new()),
+            inner: RwLock::new(HashMap::new()),
         }
     }
 

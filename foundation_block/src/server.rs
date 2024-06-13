@@ -1,4 +1,6 @@
-use crate::{Block, BlockInTransit, Blockchain, MemoryPool, Transaction, UTXOSet, GLOBAL_CONFIG};
+use crate::{
+    Block, BlockInTransit, Blockchain, MemoryPool, Nodes, Transaction, UTXOSet, GLOBAL_CONFIG,
+};
 use data_encoding::HEXLOWER;
 use log::{error, info};
 use once_cell::sync::Lazy;
@@ -25,6 +27,7 @@ static GLOBAL_NODES: Lazy<Nodes> = Lazy::new(|| {
 static GLOBAL_MEMORY_POOL: Lazy<MemoryPool> = Lazy::new(|| MemoryPool::new());
 static GLOBAL_BLOCKS_IN_TRANSIT: Lazy<BlockInTransit> = Lazy::new(|| BlockInTransit::new());
 
+const TCP_WRITE_TIMEOUT: u64 = 1000;
 pub struct Server {
     blockchain: Blockchain,
 }
@@ -42,10 +45,10 @@ impl Server {
             send_version(CENTERAL_NODE, best_height);
         }
         for stream in listener.incoming() {
-            let blockchaine = self.blockchain.clone();
+            let blockchain = self.blockchain.clone();
             thread::spawn(|| match stream {
-                Ok(stream) => {}
-                Err(e) => {}
+                Ok(stream) => ..,
+                Err(e) => ..,
             });
         }
     }
@@ -57,6 +60,7 @@ pub enum OpType {
     Block,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Package {
     Block {
         addr_from: String,
@@ -91,9 +95,9 @@ pub enum Package {
     },
 }
 
-fn send_get_details(addr: &str, op_type: OpType, id: &[u8]) {
+fn send_get_data(addr: &str, op_type: OpType, id: &[u8]) {
     let socket_addr = addr.parse().unwrap();
-    let node_addr = GLOBAL_CONFIG.get_node_addr.parse().unwrap();
+    let node_addr = GLOBAL_CONFIG.get_node_addr().parse().unwrap();
     send_data(
         socket_addr,
         Package::GetData {

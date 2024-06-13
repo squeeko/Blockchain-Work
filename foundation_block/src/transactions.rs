@@ -1,5 +1,5 @@
-use crate::wallet::hash_pub_key;
-use crate::{base58_decode, wallet, Blockchain, UTXOSet, Wallets};
+use crate::wallets::{self, hash_pub_key};
+use crate::{base58_decode, Blockchain, UTXOSet, Wallets};
 use data_encoding::HEXLOWER;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -13,7 +13,7 @@ pub struct Transaction {
 }
 
 impl Transaction {
-    pub fn new_coinbase(to: &str) -> Transaction {
+    pub fn new_coinbase_tx(to: &str) -> Transaction {
         let txout = TXOutput::new(SUBSIDY, to);
         let mut tx_input = TXInput::default();
         tx_input.signature = Uuid::new_v4().as_bytes().to_vec();
@@ -28,7 +28,7 @@ impl Transaction {
         return tx;
     }
 
-    pub fn new_uxto_transaction(
+    pub fn new_utxo_transaction(
         from: &str,
         to: &str,
         amount: i32,
@@ -46,7 +46,7 @@ impl Transaction {
 
         let mut inputs = vec![];
         for (txid_hex, outs) in valid_outputs {
-            let txid = HEXLOWER.decode(txid - hex.as_bytes()).unwrap();
+            let txid = HEXLOWER.decode(txid_hex.as_bytes()).unwrap();
             for out in outs {
                 let input = TXInput {
                     txid: txid.clone(),
@@ -209,7 +209,7 @@ impl TXInput {
     }
 
     pub fn uses_key(&self, pub_key_hash: &[u8]) -> bool {
-        let locking_hash = wallet::hash_pub_key(self.pub_key.as_slice());
+        let locking_hash = wallets::hash_pub_key(self.pub_key.as_slice());
         return locking_hash.eq(pub_key_hash);
     }
 }
@@ -222,7 +222,7 @@ pub struct TXOutput {
 
 impl TXOutput {
     pub fn new(value: i32, address: &str) -> TXOutput {
-        TXOutput {
+        let mut output = TXOutput {
             value,
             pub_key_hash: vec![],
         };
@@ -240,7 +240,7 @@ impl TXOutput {
 
     fn lock(&mut self, address: &str) {
         let payload = base58_decode(address);
-        let pub_key_hash = payload[1..payload.len() - wallet::ADDRESS_CHECK_SUM_LEN].to_vec();
+        let pub_key_hash = payload[1..payload.len() - wallets::ADDRESS_CHECK_SUM_LEN].to_vec();
         self.pub_key_hash = pub_key_hash;
     }
 

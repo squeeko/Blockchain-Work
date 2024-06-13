@@ -72,7 +72,7 @@ pub fn convert_address(pub_hash_key: &[u8]) -> String {
     crate::base58_encode(payload.as_slice())
 }
 
-use crate::Wallet;
+// use crate::Wallet;
 use std::collections::HashMap;
 use std::env::current_dir;
 use std::fs::{File, OpenOptions};

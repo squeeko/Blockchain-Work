@@ -1,17 +1,17 @@
-use crate::transaction::TXOutput;
+use crate::transactions::TXOutput;
 use crate::{Block, Blockchain};
 use data_encoding::HEXLOWER;
 use std::collections::HashMap;
 
 const UTXO_TREE: &str = "chainstate";
 
-pub struct UXTOSet {
+pub struct UTXOSet {
     blockchain: Blockchain,
 }
 
-impl UXTOSet {
-    pub fn new(blockchain: Blockchain) -> UXTOSet {
-        UXTOSet { blockchain }
+impl UTXOSet {
+    pub fn new(blockchain: Blockchain) -> UTXOSet {
+        UTXOSet { blockchain }
     }
 
     pub fn get_blockchain(&self) -> &Blockchain {
@@ -33,7 +33,7 @@ impl UXTOSet {
             let outs: Vec<TXOutput> = bincode::deserialize(v.to_vec().as_slice())
                 .expect("unable to deserialize TXOutput");
             for (idx, out) in outs.iter().enumerate() {
-                if outs.is_locked_with_key(pub_key_hash) && accumulated < amount {
+                if out.is_locked_with_key(pub_key_hash) && accumulated < amount {
                     accumulated += out.get_value();
                     if unspent_outputs.contains_key(txid_hex.as_str()) {
                         unspent_outputs
@@ -49,21 +49,21 @@ impl UXTOSet {
         (accumulated, unspent_outputs)
     }
 
-    pub fn find_uxto(&self, pub_key_hash: &[u8]) -> Vec<TXOutput> {
+    pub fn find_utxo(&self, pub_key_hash: &[u8]) -> Vec<TXOutput> {
         let db = self.blockchain.get_db();
-        let uxto_tree = db.open_tree(UTXO_TREE).unwrap();
-        let mut xtos = vec![];
-        for item in uxto_tree.iter() {
+        let utxo_tree = db.open_tree(UTXO_TREE).unwrap();
+        let mut utxos = vec![];
+        for item in utxo_tree.iter() {
             let (_, v) = item.unwrap();
             let outs: Vec<TXOutput> = bincode::deserialize(v.to_vec().as_slice())
                 .expect("unable to deserialize TXOutput");
             for out in outs.iter() {
                 if out.is_locked_with_key(pub_key_hash) {
-                    uxtos.push(out.clone())
+                    utxos.push(out.clone())
                 }
             }
         }
-        uxtos
+        utxos
     }
 
     pub fn count_transactions(&self) -> i32 {

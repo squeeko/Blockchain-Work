@@ -1,4 +1,4 @@
-use crate::transaction::TXOutput;
+use crate::transactions::TXOutput;
 use crate::{Block, Transaction};
 use data_encoding::HEXLOWER;
 use sled::transaction::TransactionResult;
@@ -26,7 +26,7 @@ impl Blockchain {
             let coinbase_tx = Transaction::new_coinbase_tx(genesis_address);
             let block = Block::generate_genesis_block(&coinbase_tx);
             Self::update_blocks_tree(&blocks_tree, &block);
-            tip_hash = String::from(blok.get_hash());
+            tip_hash = String::from(block.get_hash());
         } else {
             tip_hash = String::from_utf8(data.unwrap().to_vec()).unwrap();
         }
@@ -59,15 +59,15 @@ impl Blockchain {
         }
     }
 
-    pub fn get_db(&self) -> Db {
+    pub fn get_db(&self) -> &Db {
         &self.db
     }
 
     pub fn get_tip_hash(&self) -> String {
-        &self.tip_hash.read().unwrap().clone()
+        self.tip_hash.read().unwrap().clone()
     }
 
-    pub fn set_tip_hash(&self, new_tip_hash: &str) -> String {
+    pub fn set_tip_hash(&self, new_tip_hash: &str) {
         let mut tip_hash = self.tip_hash.write().unwrap();
         *tip_hash = String::from(new_tip_hash)
     }
@@ -79,7 +79,7 @@ impl Blockchain {
             }
         }
         let best_height = self.get_best_height();
-        let block = Block::new(self.get_tip_hash, transactions, best_height + 1);
+        let block = Block::new_block(self.get_tip_hash(), transactions, best_height + 1);
         let block_hash = block.get_hash();
         let blocks_tree = self.db.open_tree(BLOCKS_TREE).unwrap();
         Self::update_blocks_tree(&blocks_tree, &block);
@@ -91,7 +91,7 @@ impl Blockchain {
         BlockchainIterator::new(self.get_tip_hash(), self.db.clone())
     }
 
-    pub fn find_uxto(&self) -> HashMap<String, Vec<TXOutput>> {
+    pub fn find_utxo(&self) -> HashMap<String, Vec<TXOutput>> {
         let mut utxo: HashMap<String, Vec<TXOutput>> = HashMap::new();
         let mut spent_txos: HashMap<String, Vec<usize>> = HashMap::new();
 
@@ -134,7 +134,7 @@ impl Blockchain {
                 }
             }
         }
-        uxto
+        utxo
     }
 
     pub fn find_transaction(&self, txid: &[u8]) -> Option<Transaction> {
@@ -155,7 +155,7 @@ impl Blockchain {
     }
 
     pub fn add_block(&self, block: &Block) {
-        let block_tree = self.db.open(BLOCKS_TREE).unwrap();
+        let block_tree = self.db.open_tree(BLOCKS_TREE).unwrap();
         if let Some(_) = block_tree.get(block.get_hash()).unwrap() {
             return;
         }
@@ -176,7 +176,7 @@ impl Blockchain {
     }
 
     pub fn get_best_height(&self) -> usize {
-        let block_tree = self.db.open(BLOCKS_TREE).unwrap();
+        let block_tree = self.db.open_tree(BLOCKS_TREE).unwrap();
         let tip_block_bytes = block_tree
             .get(self.get_tip_hash())
             .unwrap()
@@ -223,7 +223,7 @@ impl BlockchainIterator {
     }
 
     pub fn next(&mut self) -> Option<Block> {
-        let block_tree = self.db.open(BLOCKS_TREE).unwrap();
+        let block_tree = self.db.open_tree(BLOCKS_TREE).unwrap();
         let data = block_tree.get(self.current_hash.clone()).unwrap();
         if data.is_none() {
             return None;

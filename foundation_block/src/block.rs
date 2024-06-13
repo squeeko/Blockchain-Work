@@ -1,11 +1,8 @@
-extern crate bincode;
-use crate::proof_of_work::ProofOfWork;
-use crate::transaction::Transaction;
 use crate::{ProofOfWork, Transaction};
-use bincode::{deserialize, serialize};
 use serde::{Deserialize, Serialize};
 use sled::IVec;
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Block {
     timestamp: i64,
     pre_block_hash: String,
@@ -25,14 +22,16 @@ impl Block {
             nonce: 0,
             height,
         };
+
         let pow = ProofOfWork::new_proof_of_work(block.clone());
         let (nonce, hash) = pow.run();
         block.nonce = nonce;
         block.hash = hash;
         return block;
     }
+
     pub fn deserialize(bytes: &[u8]) -> Block {
-        bincode::deserialize(bytes).unwrap();
+        bincode::deserialize(bytes).unwrap()
     }
     pub fn serialize(&self) -> Vec<u8> {
         bincode::serialize(self).unwrap().to_vec()
