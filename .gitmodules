@@ -4,3 +4,6 @@
 [submodule "foundry-project/lib/solmate"]
 	path = foundry-project/lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "foundry-project/lib/openzeppelin-contracts"]
+	path = foundry-project/lib/openzeppelin-contracts
+	url = https://github.com/Openzeppelin/openzeppelin-contracts
