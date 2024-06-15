@@ -1,3 +1,15 @@
+<<<<<<< HEAD
 [submodule "foundry/foundry-project/lib/forge-std"]
 	path = foundry/foundry-project/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+=======
+[submodule "foundry-project/lib/forge-std"]
+	path = foundry-project/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "foundry-project/lib/solmate"]
+	path = foundry-project/lib/solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "foundry-project/lib/openzeppelin-contracts"]
+	path = foundry-project/lib/openzeppelin-contracts
+	url = https://github.com/Openzeppelin/openzeppelin-contracts
+>>>>>>> dev
