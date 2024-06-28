@@ -1,1 +1,4 @@
 
+[submodule "Foundry-Work/example_project/lib/forge-std"]
+	path = Foundry-Work/example_project/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
